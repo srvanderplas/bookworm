@@ -15,10 +15,15 @@ headers = c(
 url <- "https://api2.isbndb.com/books/{query}?page={page}&pageSize=1000&column={columnName}"
 
 
-url <- glue("https://api2.isbndb.com/books/science%20fiction?page={i}&pageSize=1000&column=subjects", i = 1:10)
+url2 <- glue("https://api2.isbndb.com/books/romance?page={i}&pageSize=1000&column=subjects&year=2023", i = 1:10)
 
-resp <- tibble(url = url, resp = purrr::map(url, ~GET(., add_headers(headers))))
+resp2 <- tibble(url = url2, resp = purrr::map(url, ~GET(., add_headers(headers))))
 
-resp <- resp %>% mutate(df = map(resp, ~jsonlite::parse_json(content(., as = "text"), simplifyVector=T)))
+resp2 <- resp2 %>% mutate(df = map(resp, ~jsonlite::parse_json(content(., as = "text"), simplifyVector=T)))
 
-df = jsonlite::parse_json(content(resp, as = "text"), simplifyVector = T)
+df2 = bind_rows(resp2$df)
+
+
+
+scifi <- GET("https://api2.isbndb.com/subject/Science%20Fiction", add_headers(headers))
+content(scifi, as = "text") %>% jsonlite::parse_json(., simplifyVector = T)
