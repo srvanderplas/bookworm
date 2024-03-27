@@ -27,3 +27,12 @@ df2 = bind_rows(resp2$df)
 
 scifi <- GET("https://api2.isbndb.com/subject/Science%20Fiction", add_headers(headers))
 content(scifi, as = "text") %>% jsonlite::parse_json(., simplifyVector = T)
+
+
+
+url3 <- glue("https://api2.isbndb.com/publisher/{query}?page={page}&pageSize=1000", query = URLencode("Penguin House"), page = 1:10)
+
+
+resp3 <- tibble(url = url3, resp = purrr::map(url, ~GET(., add_headers(headers))))
+
+resp3 <- resp3 %>% mutate(df = map(resp, ~jsonlite::parse_json(content(., as = "text"), simplifyVector=T)))
